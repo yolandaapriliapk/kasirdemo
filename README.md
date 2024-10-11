@@ -1,229 +1,274 @@
+Cucumber Boilerplate [![Test](https://github.com/webdriverio/cucumber-boilerplate/actions/workflows/test.yaml/badge.svg)](https://github.com/webdriverio/cucumber-boilerplate/actions/workflows/test.yaml)
+====================
 
-### WebdriverIO-v8 boilerplate code with Cucumber BDD
+Boilerplate project to run WebdriverIO (alpha v8) tests with [Cucumber](https://cucumber.io/) and brings **true** [BDD](http://en.wikipedia.org/wiki/Behavior-driven_development) to JavaScript. Instead of writing complicated test code that only developers can understand, Cucumber maps an ordinary language to code and allows to start with the test process in the early stages of your product development.
 
-This repository contains a collection of sample webdriverIO-v8 (Selenium - Node.js/JavaScript) projects and libraries that demonstrate how to use the tool and develop automation script using the CucumberJS BDD framework. It uses the `chromedriver` NPM package that wraps the ChromeDriver for you. This service does not require a Selenium server, but uses ChromeDriver to communicate with the browser directly.
+__Note:__ If you are still using an older WebdriverIO version, check out the [`v7`](https://github.com/webdriverio/cucumber-boilerplate/tree/v7) branch.
 
-This boilerplate code support Typescript, also provides sample utilities to read data from MS-Excel, executes SQL statements to any database (RDBMS such as Oracle, TeraData, MySQL, Vertica) for end to end testing. It generate Allure, JSON, Junit/Xunit, Spec reporters as well. `Please note that at the time of writing (January 2023) the wdio reporting module of JSON, Junit/Xunit are not fully compatible with V8 hence it is disabled from this boilerplate code.`
+## Requirements
 
-💡 If you need the wdio-v7 boilerplate project, please take the code from v7 branch: click [here](https://github.com/amiya-pattnaik/webdriverIO-with-cucumberBDD/tree/wdio-v7)
+- Node version 14 or higher
+- A preconfigured Selenium Grid, preinstalled browser driver or cloud provider account
 
-### Installation
+Although this project works fine with NPM we recommend to use Yarn (>= 1.0.0) instead,  due to its speed & solid dependency locking mechanism. To keep things simple we use yarn in this guide, but feel free to replace this with NPM if that is what you are using.
 
-This project is tested on **Node v18.0.0** and above.  While earlier versions of node may be compatible, but they have not been verified.
+Also this project doesn't cover setting up a proper test environment. You need to download specific browser driver yourself and run the prior starting tests or use a cloud provider like [SauceLabs](https://saucelabs.com/).
 
-`Node.JS:` Install  from the site - https://nodejs.org/en/  take the LTS version based on your Operating system. Please make sure you install NodeJS globally. To take full advantage of the command line you will need to make sure that you have added `node_modules/.bin` to your `$PATH`.  Otherwise you will need to install `npm install -g` globally.
+## Quick start
 
+Choose one of the following options:
 
-`JDK:` It is optional, install JDK and make sure class path is set properly. JAVA is require to start `Selenium Server` on your local environment nothing else.
+1. Download the latest stable release [here](https://github.com/webdriverio/cucumber-boilerplate/archive/main.zip) or clone the git repo — `git clone https://github.com/webdriverio/cucumber-boilerplate.git`
 
-### Selenium, Appium
+2. Then:
+- Copy the files to your project into a directory like `/integrationtests` (note the hidden files!)
 
-To run your test you must have Selenium / Appium server up and running to execute any webdriverIO tests, or it will fail fast with an error. To start selenium automatically it has been added as part of `services: ['selenium-standalone']` and `services: ['appium']` in the `*.conf.ts`.  That's all there is to it.!.
+3. Clean the project (Optional):
+- *On OSX/Linux:*
+-- Run `yarn run clean`
 
-### Run Some Sample Tests
+- *On Windows:*
+-- Remove the directories `/.git`, `/.github`, `/demo-app` & `/test`
+-- Remove the files `.travis.yml`, `jest.json` & `wdio.BUILD.conf.js`
+-- Remove all the demo features from the `/src/features` directory
 
-To execute the entire test suite on local development or cloud provider, you can use below
+4. Install the dependencies (`yarn install`)
 
-Option 1: Local Environment `npm run test-local`.
+Now you are ready to write your own features.
 
-Option 2: You can also run on `SauceLabs` or  `BrowserStack` or `LambdaTest` using `npm run test-sauce` or `npm run test-browserstack` or `npm run test-browserstack` or `npm run test-lambdatest`.
+## Features
 
-Option 3: Mobile Device. To execute tests on mobile device use : `npm run test-mobile`.
+- Super simple setup
+- Full integration with [WebdriverIO](http://webdriver.io/)
+- Over 150 predefined steps that cover almost everything you need, you can start writing tests right away
+- Easy integration with cloud services like [Sauce Labs](https://saucelabs.com/)
+- Integration of WebdriverIO's Multiremote functionality
+- Easy to run tests in parallel
 
-💡 Before running mobile tests, perform the requisite Appium setup. For hassle free `one click Appium setup on OSX` refer [appium-setup-made-easy-OSX](https://github.com/amiya-pattnaik/appium-setup-made-easy-OSX) or refer [Appium Docs](http://appium.io/getting-started.html?lang=en)
+# How to write a test
 
-### Config Files
+Tests are written in [Gherkin syntax](https://cucumber.io/docs/gherkin/)
+that means that you write down what's supposed to happen in a real language. All test files are located in
+`./src/features/*` and have the file ending `.feature`. You will already find some test files in that
+directory. They should demonstrate, how tests could look like. Just create a new file and write your first
+test.
 
-WebdriverIO uses configuration files to setup and execute tests in specific ways.  The configuration is fully customizable, and different functions can be invoked before, during and after each test or test suite.  Config files are found in the `the root directory of this boilerplate project.`and all ends with `*.conf.ts`.  These can be called via the the cli.
+__myFirstTest.feature__
+```gherkin
+Feature:
+    In order to keep my product stable
+    As a developer or product manager
+    I want to make sure that everything works as expected
 
-### SauceLabs, BrowserStack and LambdaTest Integration
+Scenario: Check title of website after search
+    Given I open the url "http://google.com"
+    When I set "WebdriverIO" to the inputfield "#lst-ib"
+    And I press "Enter"
+    Then I expect that the title is "WebdriverIO - Google Search"
 
-`SauceLabs`,  `BrowserStack` and `lambdatest` specific code has been added in the `wdio.sauce.conf.ts`,  `wdio.browserstack.conf.ts` and `wdio.lambdatest.conf.ts` under the /test/config folder. You just need to provide your SauceLabs/BrowserStack/LambdaTest credentials in the config file. To run test on SauceLabs, execute command `npm run test-sauce` to run test on BrowserStack `npm run test-browserstack`, to run test on LambdaTest `npm run test-lambdatest`.
-
-### Logs  
-
-Complete set of execution `logs` will be generated during the run time and can be found in the parent folder location /logs.
-
-### Reporters
-
-WebdriverIO uses several different types of test reporters to communicate pass/failure.  
-
-##### Allure
-
-The Allure Reporter creates [Allure](https://docs.qameta.io/allure/) test reports which is an HTML generated website with all necessary information to debug your test results and take a look on error screenshots. Add allure to the reporters array in config file and define the output directory of the allure reports.  Please note, this has been added in wdio.shared.config.
-
-To generate and view an Allure report inside your corp network or locally, run `npm run allure-report`. The Allure report is hosted on a `web server` and can be accessed through http://YourMachineIP:5050/ and also generated locally which can be found at `./allure-report/index.html`. A typical Allure report will look like this.
-![ScreenShot](https://github.com/amiya-pattnaik/snapshots/blob/master/allure-report.png)
-
-##### Junit/Xunit
-
-To generate and view the Junit/Xunit report inside your corp network or locally, run `npm run xunit-report`.  The Junit/Xunit report is hosted on a `web server` and can be accessed through http://YourMachineIP:3000/ and also generated locally which can be found at `./xunit-report/xunit-report.html`. A typical Junit/Xunit report will look like this.
-![ScreenShot](https://github.com/amiya-pattnaik/snapshots/blob/master/xunit-report.png)
-
-##### Dot
-
-To use the dot reporter just add 'dot' to the reporters array in the config file. The dot reporter prints for each test spec a dot. If colors are enabled on your machine you will see three different colors for dots. Yellow dots mean that at least one browser has executed that spec. A green dot means all browser passed that spec and a red to means that at least one browser failed that spec. All config files have this turned on by default.
-
-##### Spec
-
-Test reporter, that prints detailed results to console.
-
-### Develop automation scripts (for both desktop browser and mobile browser / app)
-
-You can write test by using Cucumber BDD framework. You can choose javascript based design pattern or ES6 based.
-
-Refer complete [WebdriverIO v8 API](https://webdriver.io/docs/api) methods to write your automation tests.
-
-##### Using Cucumber JavaScript framework
-
-Tests are written in the Cucumber framework using the Gherkin Syntax. More about Gherkin & Cucumber can be found at https://cucumber.io/
-
-Tests are place in `*.feature` files in the `/test/features/` directory. A typical test will look similar to this:
-```
-Feature: The Internet Guinea Pig Website
-
-  Scenario Outline: As a user, I can log into the secure area
-
-    Given I am on the login page
-    When I login with <username> and <password>
-    Then I should see a flash message saying <message>
-
-    Examples:
-      | username | password             | message                        |
-      | tomsmith | SuperSecretPassword! | You logged into a secure area! |
-      | foobar   | barfoo               | Your username is invalid!      |
+Scenario: Another test
+    Given ...
 
 ```
-### The Page Object Design Pattern
 
-Within your web app's UI there are areas that your tests interact with. A Page Object simply models these as objects within the test code. This reduces the amount of duplicated code and means that if the UI changes, the fix need only be applied in one place. In other wards one of the challenges of writing test automation is keeping your [selectors] (classes, id's, or xpath' etc.) up to date with the latest version of your code.  The next challenge is to keep the code you write nice and DRY (Don't Repeat Yourself).  The page object pattern helps us accomplish this in one solution.  Instead of including our selectors in our step definitions in cucumber, we instead place them in a `<pagename>.ts` file where we can manage all these selectors and methods together. Your test file should only call the test methods.
+This test opens the browser and navigates them to google.com to check if the title contains the search
+query after doing a search. As you can see, it is pretty simple and understandable for everyone.
 
-You can also place reusable functions or logic inside of these pages and call them from your step files. The page object serves as a layer of abstraction between tests and code.  When a test fails, it fails on a individual step.  That step may call a selector that is no longer valid, but that selector may be used by many other steps.  By having a single source of truth of what the selector is supposed to be, fixing one selector on the page object could repair a number of failing tests that were affected by the same selector.
+# How to run the test
 
-An object called `Page` will be created with the prototype model or by ES6 class pattern.  This ensures that every instance of a page object is exported as a stateless construct. Any any changes to that state are handled in the browser, rather than on the server.
+Start the local web server:
 
-It is preferable to separate page objects into individual files that end with `.page.ts`.  These will require the basic `page.ts` prototype construct / abstract class and create new objects for each individual page.
-
-For more information on the implementation of `Page Object Design Pattern`, refer to the `/test/pageobjects` directory. A typical page class using ES6 syntax will look similar to this:
-
-💡 If you want to use ES5 syntax, refer to the sample.page.js under util-examples.
-
-```
-//pageobject using async mode//
-
-class LoginPage extends Page {
-    /**
-     * define selectors using getter methods
-     */
-    public get inputUsername () {
-        return $('#username');
-    }
-
-    public get inputPassword () {
-        return $('#password');
-    }
-
-    public get btnSubmit () {
-        return $('button[type="submit"]');
-    }
-
-    /**
-     * a method to encapsule automation code to interact with the page
-     * e.g. to login using username and password
-     */
-    public async login (username: string, password: string) {
-        await this.inputUsername.setValue(username);
-        await this.inputPassword.setValue(password);
-        await this.btnSubmit.click();
-    }
-
-    /**
-     * overwrite specific options to adapt it to page object
-     */
-    public open () {
-        return super.open('login');
-    }
-}
-export default new LoginPage();
-
-```
-=======
-### Additional Utilities (out of scope of this framework)
-
-#### Working with DataBase
-
-A relational database is, simply, a database that stores related information across multiple tables and allows you to query information in more than one table at the same time. Your application under test displays data from these database. So when you are actually performing automation testing it is very likely that you need to verify the data between actual (which you got it from browser) Vs expected (which you will get it from the database by executing SQL statements on database). This can be done by below statements in your code.
-```
-//example of connection to Oracle DataBase
-
-var  db   = require('node-any-jdbc');
-
-cogfig = {
-  libpath: './config/drivers/oracle/ojdbc7.jar',
-  drivername: 'oracle.jdbc.driver.OracleDriver',
-  url:  'jdbc:oracle:thin:QA/password123@//abc-test.corp.int:1527/stage1',
-  // uri: 'jdbc:oracle:thin://abc-test.corp.int:1527/stage1',
-  // user: 'QA',
-  // password: 'password123',
-};
-
-//example of sample select query to fetch the result set
-
-var sql = 'SELECT * FROM emp_info where emp_id = "1001"';
-db.execute(cogfig, sql, function(results){
-  //console.log(results);
-  //then do what ever validation you want to do with results
-});
-
-```
-For trouble shooting and more information, please visit `node-any-jdbc` module which can be found [here](https://www.npmjs.com/package/node-any-jdbc)
-
-Note: `node-any-jdbc` is NOT packaged under this project. If you need, you can install it as a separate npm module `npm install node-any-jdbc --save` and start using it right away.
-You can also find sample examples under /util-examples/database-example.js
-
-### Working with Excel File
-
-You can use `MS-Excel / OpenOffice` Excel files and store your test data, expected data in an excel sheet. you can keep any number of excel sheets you want and use below common methods to pull data from your sheet to be use as part of testing.  Please note it only support `.xlsx` file format. For more information refer to the `common-utilities.js` and `util-examples`
-
-```
-//example of pulling data from MS-Excel
-
-var  utl  = require('../utilities/common-utilities.js');
-utl.excel_getTableRow(__dirname+'/sample.xlsx', 'info', 'emp_id', '101', function(results){
-  // returns only one row based on the condition
-  //console.log(results);
-  //console.log(results.emp_id);
-});
-
-utl.excel_getTableRows(__dirname+'/sample.xlsx', 'address', function(results){
-  // returns all rows of the specified sheet
-  //console.log(results[1]);
-  //then do what ever validation you to do withe results
-});
-
-utl.excel_getAllSheetData(__dirname+'/sample.xlsx', function(results){
-  // returns all sheets data of a excel file
-  //console.log(results);
-  //then do what ever validation you to do withe results
-});
-
+```sh
+$ yarn run test
 ```
 
-### Common utilities
+To run your tests just call the [WDIO runner](http://webdriver.io/guide/testrunner/gettingstarted.html):
 
-Refer to the common Javascript functions that provides clean, performant methods for manipulating objects, collections, MS-Excel utilities, DataBase utilities etc. Few sample code can be found in /util-examples/
+```sh
+$ yarn run wdio
+```
 
-Use [Underscore.js](http://underscorejs.org/) already bundled inside the framework which provides over 100 functions that support both your favorite workaday functional helpers: map, filter, invoke — as well as more specialized goodies: function binding, javascript templating, creating quick indexes, deep equality testing, and so on.
+_please note_ The WDIO runner uses the configuration file `wdio.conf.js` by default.
 
-### Contribution
+# Configurations
 
-Create a fork of the project into your own repository. Make all your necessary changes and create a pull request with a description on what was added or removed and details explaining the changes in lines of code. If approved, project owners will merge it.
+To configure your tests, checkout the [`wdio.conf.js`](https://github.com/webdriverio/cucumber-boilerplate/blob/main/wdio.conf.js) file in your test directory. It comes with a bunch of documented options you can choose from.
 
-### History
+## Environment-specific configurations
 
-Industry is moving towards Node.js / JavaScript, Angularjs, Full-Stack world. WebdriverIO, a JavaScript binding wrapper for Selenium Webdriver, was originated by Camilo Tapia's initial Selenium project called WebdriverJS, which was the first Webdriver project on NPM. In 2014, the project was renamed WebdriverIO later on. This repository is a pre-configured version of webdriverIO meant to jump-start the process of writing new test automation or adding test automation to existing node.js applications.
+You can setup multiple configs for specific environments. Let's say you want to have a different `baseUrl` for
+your local and pre-deploy tests. Use the `wdio.conf.js` to set all general configs (like mochaOpts) that don't change.
+They act as default values. For each different environment you can create a new config with the following name
+scheme:
+
+```txt
+wdio.<ENVIRONMENT>.conf.js
+```
+
+Now you can create a specific config for your pre-deploy tests:
+
+__wdio.STAGING.conf.js__
+```js
+var config = require('./wdio.conf.js').config;
+
+config.baseUrl = 'http://staging.example.com'
+
+exports.config = config;
+```
+
+Your environment-specific config file will get merged into the default config file and overwrites the values you set.
+To run a test in a specific environment just add the desired configuration file as the first parameter:
+
+```sh
+$ yarn run wdio wdio.STAGING.conf.js
+```
+
+# Running single feature
+Sometimes it's useful to only execute a single feature file, to do so use the following command:
+
+```sh
+$ npx wdio wdio.conf.js --spec ./test/features/select.feature
+```
 
 
-### Licensing
+# Using tags
 
-MIT
+If you want to run only specific tests you can mark your features with tags. These tags will be placed before each feature like so:
+
+```gherkin
+@Tag
+Feature: ...
+```
+
+To run only the tests with specific tag(s) use the `--cucumberOpts.tagExpression=` parameter like so:
+
+```sh
+$ npx wdio wdio.conf.js --cucumberOpts.tagExpression='@Tag or @AnotherTag'
+```
+
+For more tag options please see the [Cucumber.js documentation](https://docs.cucumber.io/tag-expressions/)
+
+# Pending test
+
+If you have failing or unimplemented tests you can mark them as "Pending" so they will get skipped.
+
+```gherkin
+// skip whole feature file
+@Pending
+Feature: ...
+
+// only skip a single scenario
+@Pending
+Scenario: ...
+```
+
+# Adding new steps and snippets
+
+The predefined snippets allow you to do a lot of common things but you might need extra snippets which
+are better aligned with your aims. To do so you will find all step definitions in `./src/steps`. They
+are separated in `given`, `when` and `then`.
+
+You define your snippet using regular expressions. This is pretty powerful as it allows you to create complex
+sentences with multiple options. Everything that's within `"([^"]*)?"` gets captured and appended to the
+callback. The last argument is always a callback function that you need to call when your step is done.
+You can access the browser and your WebdriverIO instance with `browser`.
+
+To assert values this boilerplate project uses WebdriverIOs embedded assertion library called [expect-webdriverio](https://www.npmjs.com/package/expect-webdriverio).
+
+# Comments
+
+You can add additional descriptive comments in your feature files.
+
+```gherkin
+###
+  This is a
+  block comment
+###
+Feature: As a bystander
+    I can watch bottles falling from a wall
+    So that I can be mildly amused
+
+# This is a single line comment
+Scenario: check if username is present
+    Given I login as "roboter" with password "test123"
+    Then the username "roboter" should be present in the header
+```
+
+# List of predefined steps
+
+Check out all predefined snippets. You can see how they get used in [`sampleSnippets.feature`](https://github.com/webdriverio/cucumber-boilerplate/blob/main/src/features/sampleSnippets.feature).
+
+## Given steps
+
+- `I open the (url|site) "([^"]*)?"` <br>Open a site in the current browser window/tab
+- `the element "([^"]*)?" is( not)* displayed` <br>Check the (in)visibility of an element
+- `the element "([^"]*)?" is( not)* enabled` <br>Check if an element is (not) enabled
+- `the element "([^"]*)?" is( not)* selected` <br>Check if an element is (not) selected
+- `the checkbox "([^"]*)?" is( not)* checked` <br>Check if a checkbox is (not) checked
+- `there is (an|no) element "([^"]*)?" on the page` <br>Check if an element (does not) exist
+- `the title is( not)* "([^"]*)?"` <br>Check the title of the current browser window/tab
+- `the element "([^"]*)?" contains( not)* the same text as element "([^"]*)?"` <br>Compare the text of two elements
+- `the (button|element) "([^"]*)?"( not)* contains the text "([^"]*)?"` <br>Check if an element contains the given text
+- `the (button|element) "([^"]*)?"( not)* contains any text` <br>Check if an element does not contain any text
+- `the (button|element) "([^"]*)?" is( not)* empty` <br>Check if an element is empty
+- `the page url is( not)* "([^"]*)?"` <br>Check the url of the current browser window/tab
+- `the( css)* attribute "([^"]*)?" from element "([^"]*)?" is( not)* "([^"]*)?"` <br>Check the value of an element's (css) attribute
+- `the cookie "([^"]*)?" contains( not)* the value "([^"]*)?"` <br>Check the value of a cookie
+- `the cookie "([^"]*)?" does( not)* exist` <br>Check the existence of a cookie
+- `the element "([^"]*)?" is( not)* ([\d]+)px (broad|tall)` <br>Check the width/height of an element
+- `the element "([^"]*)?" is( not)* positioned at ([\d]+)px on the (x|y) axis` <br>Check the position of an element
+- `I have a screen that is ([\d]+) by ([\d]+) pixels` <br>Set the browser size to a given size
+- `I have closed all but the first (window|tab)` <br>Close all but the first browser window/tab
+- `a (alertbox|confirmbox|prompt) is( not)* opened` <br>Check if a modal is opened
+
+## Then steps
+
+- `I expect that the title is( not)* "([^"]*)?"` <br>Check the title of the current browser window/tab
+- `I expect that element "([^"]*)?" does( not)* appear exactly "([^"]*)?" times` <br>Checks that the element is on the page a specific number of times
+- `I expect that element "([^"]*)?" is( not)* visible` <br>Check if a certain element is visible
+- `I expect that element "([^"]*)?" becomes( not)* visible` <br>Check if a certain element becomes visible
+- `I expect that element "([^"]*)?" is( not)* within the viewport` <br>Check if a certain element is within the current viewport
+- `I expect that element "([^"]*)?" does( not)* exist` <br>Check if a certain element exists
+- `I expect that element "([^"]*)?"( not)* contains the same text as element "([^"]*)?"` <br>Compare the text of two elements
+- `I expect that (button|element) "([^"]*)?"( not)* contains the text "([^"]*)?"` <br>Check if an element or input field contains the given text
+- `I expect that (button|element) "([^"]*)?"( not)* contains any text` <br>Check if an element or input field contains any text
+- `I expect that (button|elementelement) "([^"]*)?" is( not)* empty` <br>Check if an element or input field is empty
+- `I expect that the url is( not)* "([^"]*)?"` <br>Check if the the URL of the current browser window/tab is a certain string
+- `I expect that the path is( not)* "([^"]*)?"` <br>Check if the path of the URL of the current browser window/tab is a certain string
+- `I expect the url to( not)* contain "([^"]*)?"` <br>Check if the URL of the current browser window/tab contains a certain string
+- `I expect that the( css)* attribute "([^"]*)?" from element "([^"]*)?" is( not)* "([^"]*)?"` <br>Check the value of an element's (css) attribute
+- `I expect that checkbox "([^"]*)?" is( not)* checked` <br>Check if a check-box is (not) checked
+- `I expect that element "([^"]*)?" is( not)* selected` <br>Check if an element is (not) selected
+- `I expect that element "([^"]*)?" is( not)* enabled` <br>Check if an element is (not) enabled
+- `I expect that cookie "([^"]*)?"( not)* contains "([^"]*)?"` <br>Check if a cookie with a certain name contains a certain value
+- `I expect that cookie "([^"]*)?"( not)* exists` <br>Check if a cookie with a certain name exist
+- `I expect that element "([^"]*)?" is( not)* ([\d]+)px (broad|tall)` <br>Check the width/height of an element
+- `I expect that element "([^"]*)?" is( not)* positioned at ([\d]+)px on the (x|y) axis` <br>Check the position of an element
+- `I expect that element "([^"]*)?" (has|does not have) the class "([^"]*)?"` <br>Check if an element has a certain class
+- `I expect a new (window|tab) has( not)* been opened` <br>Check if a new window/tab has been opened
+- `I expect the url "([^"]*)?" is opened in a new (tab|window)` <br>Check if a URL is opened in a new browser window/tab
+- `I expect that element "([^"]*)?" is( not)* focused` <br>Check if an element has the focus
+- `I wait on element "([^"]*)?"( for (\d+)ms)*( to( not)* (be checked|be enabled|be selected|be visible|contain a text|contain a value|exist))*` <br>Wait for an element to be checked, enabled, selected, visible, contain a certain value or text or to exist
+- `I expect that a (alertbox|confirmbox|prompt) is( not)* opened` <br>Check if a modal is opened
+- `I expect that a (alertbox|confirmbox|prompt)( not)* contains the text "$text"` <br>Check the text of a modal
+
+## When steps
+
+- `I (click|doubleclick) on the (link|button|element) "([^"]*)?"` <br>(Double)click a link, button or element
+- `I (add|set) "([^"]*)?" to the inputfield "([^"]*)?"` <br>Add or set the content of an input field
+- `I clear the inputfield "([^"]*)?"` <br>Clear an input field
+- `I drag element "([^"]*)?" to element "([^"]*)?"` <br>Drag an element to another element
+- `I submit the form "([^"]*)?"` <br>Submit a form
+- `I pause for (\d+)ms` <br>Pause for a certain number of milliseconds
+- `I set a cookie "([^"]*)?" with the content "([^"]*)?"` <br>Set the content of a cookie with the given name to  the given string
+- `I delete the cookie "([^"]*)?"` <br>Delete the cookie with the given name
+- `I press "([^"]*)?"` <br>Press a given key. You’ll find all supported characters [here](https://w3c.github.io/webdriver/webdriver-spec.html#keyboard-actions). To do that, the value has to correspond to a key from the table.
+- `I (accept|dismiss) the (alertbox|confirmbox|prompt)` <br>Accept or dismiss a modal window
+- `I enter "([^"]*)?" into the prompt` <br>Enter a given text into a modal prompt
+- `I scroll to element "([^"]*)?"` <br>Scroll to a given element
+- `I close the last opened (window|tab)` <br>Close the last opened browser window/tab
+- `I focus the last opened (window|tab)` <br>Focus the last opened browser window/tab
+- `I select the (\d+)(st|nd|rd|th) option for element "([^"]*)?"` <br>Select an option based on it's index
+- `I select the option with the (name|value|text) "([^"]*)?" for element "([^"]*)?"` <br>Select an option based on its name, value or visible text
+- `I move to element "([^"]*)?"( with an offset of (\d+),(\d+))` <br>Move the mouse by an (optional) offset of the specified element
+- `I switch to the iframe "([^"]*)?"` <br>Switch to a particular iFrame on the webpage
