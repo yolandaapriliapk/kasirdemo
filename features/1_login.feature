@@ -7,8 +7,8 @@ Feature: Login functionality
 
     Examples:
       | email               | password  | message                            |
-      | riezq.25@gmail.corn | password  | "email" must be a valid email      |
-      | riezq.25@gmail.com  | katasandi | Kredensial yang Anda berikan salah |
+      | yolanda@gmail.com   | password  | "email" must be a valid email      |
+      | yolanda@gmail.com   | yolandaap | Kredensial yang Anda berikan salah |
 
   Scenario: Login with valid credentials
     Given I am on the login page
@@ -17,4 +17,4 @@ Feature: Login functionality
 
     Examples:
       | email              | password | page      |
-      | riezq.25@gmail.com | password | dashboard |
+      | yolanda@gmail.com  | password | dashboard |
